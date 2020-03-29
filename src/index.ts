@@ -15,7 +15,7 @@ width *= window.devicePixelRatio;
 canvas.height = height;
 canvas.width = width;
 
-const gl = canvas.getContext('webgl2', { alpha: false, antialias: true })!;
+const gl = canvas.getContext('webgl2', { alpha: false, antialias: true, preserveDrawingBuffer: true  })!;
 
 // create program
 const program = gl.createProgram();
@@ -83,27 +83,40 @@ gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
 gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(0);
 
+// set background colour
+gl.clearColor(0, 0, 0, 1);
+
 let rotation = 0;
 let hue = 0;
 let frame = performance.now();
+let clear = true;
+
+window.addEventListener('keypress', ev => {
+  if (ev.keyCode === 32) clear = !clear;
+});
 
 // render
 function render(time: DOMHighResTimeStamp) {
+  const { sin, cos } = Math;
   const delta = time - frame;
   frame = time;
 
   rotation = (rotation + delta / 500) % (Math.PI * 2);
   hue = (hue + delta / 500) % (Math.PI * 2);
+  const scale = 1 + 0.5 * sin((frame / 837) % (Math.PI * 2));
 
   const [red, green, blue] = convert.hsl.rgb([hue * 180 / Math.PI, 100, 50]);
   gl.uniform4fv(uColor, [red / 255, green / 255, blue / 255, 1]);
 
-  const { sin, cos } = Math;
   gl.uniformMatrix3x2fv(uTransform, false, 
-    [cos(rotation), -sin(rotation), sin(rotation), cos(rotation), width / 2, height / 2]);
+    [
+      scale * cos(rotation), scale * -sin(rotation), 
+      scale * sin(rotation), scale * cos(rotation), 
+      width / 2, height / 2]
+  );
 
-  gl.clearColor(0, 0, 0, 1);
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  if (clear)
+    gl.clear(gl.COLOR_BUFFER_BIT);
   gl.drawArrays(gl.TRIANGLES, 0, 9);
   
   requestAnimationFrame(render);
