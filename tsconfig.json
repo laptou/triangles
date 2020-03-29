@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "module": "commonjs",
+    "target": "ES2017",
+    "jsx": "react",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2017",
+      "ES2019.Object"
+    ],
+    "skipLibCheck": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "paths": {
+      "@component/*": [
+        "./src/component/*"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@util/*": [
+        "./src/util/*"
+      ],
+      "@game/*": [
+        "./src/game/*"
+      ],
+      "@style/*": [
+        "./res/style/*"
+      ],
+      "@asset/*": [
+        "./res/asset/*"
+      ]      
+    },
+  },
+  "include": [
+    "src/**/*",
+    "webpack.config.js"
+  ]
+}
